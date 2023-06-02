@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{38A9115D-DA1A-484C-910A-36B63590CE18}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{0B510CDC-1A60-481E-BA04-40366D14D051}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dlls", "Dlls", "{3FF3C043-94F0-4BC7-B629-12F2F20EB5D4}"
+	ProjectSection(SolutionItems) = preProject
+		Dlls\AboutThisFolder.md = Dlls\AboutThisFolder.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CompanionFiles", "CompanionFiles", "{0F325C6F-D043-4134-AC73-D3BCD51C955C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skyline DataMiner", "Skyline DataMiner", "{570C3A4C-AF04-4418-B84C-ECB7FC61477C}"
+	ProjectSection(SolutionItems) = preProject
+		CompanionFiles\Skyline DataMiner\AboutThisFolder.md = CompanionFiles\Skyline DataMiner\AboutThisFolder.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{AD31276C-E040-4123-8C92-58E1CED718F9}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\AboutThisFolder.md = Documentation\AboutThisFolder.md
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code Analysis", "Code Analysis", "{26BC2811-F606-472C-9A48-FB5A64197FEC}"
+	ProjectSection(SolutionItems) = preProject
+		Internal\Code Analysis\qaction-debug.ruleset = Internal\Code Analysis\qaction-debug.ruleset
+		Internal\Code Analysis\qaction-release.ruleset = Internal\Code Analysis\qaction-release.ruleset
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SLC-AS-CheckCiscoManagerFwVersions", "SLC-AS-CheckCiscoManagerFwVersions", "{43364782-4803-4DEF-BCC5-12C0597991DA}"
+	ProjectSection(SolutionItems) = preProject
+		SLC-AS-CheckCiscoManagerFwVersions.xml = SLC-AS-CheckCiscoManagerFwVersions.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{BDDFB9EA-7466-4692-A007-F652D1416AD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLC-AS-CheckCiscoManagerFwVersions_1", "SLC-AS-CheckCiscoManagerFwVersions_1\SLC-AS-CheckCiscoManagerFwVersions_1.csproj", "{9342015D-A378-40CD-BDA1-1423D54163F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9342015D-A378-40CD-BDA1-1423D54163F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9342015D-A378-40CD-BDA1-1423D54163F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9342015D-A378-40CD-BDA1-1423D54163F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9342015D-A378-40CD-BDA1-1423D54163F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{570C3A4C-AF04-4418-B84C-ECB7FC61477C} = {0F325C6F-D043-4134-AC73-D3BCD51C955C}
+		{26BC2811-F606-472C-9A48-FB5A64197FEC} = {38A9115D-DA1A-484C-910A-36B63590CE18}
+		{43364782-4803-4DEF-BCC5-12C0597991DA} = {0B510CDC-1A60-481E-BA04-40366D14D051}
+		{BDDFB9EA-7466-4692-A007-F652D1416AD0} = {43364782-4803-4DEF-BCC5-12C0597991DA}
+		{9342015D-A378-40CD-BDA1-1423D54163F1} = {BDDFB9EA-7466-4692-A007-F652D1416AD0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FFCF1826-8ACF-4F16-A0F7-E3D16D035B23}
+	EndGlobalSection
+EndGlobal
