@@ -45,30 +45,98 @@ Revision History:
 
 DATE		VERSION		AUTHOR			COMMENTS
 
-dd/mm/2023	1.0.0.1		XXX, Skyline	Initial version
+06/06/2023	1.0.0.1		EVA, Skyline	Initial version
 ****************************************************************************
 */
 
-namespace SLC-AS-CheckCiscoManagerFwVersions_1
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Skyline.DataMiner.Automation;
+using Skyline.DataMiner.Library.Automation;
+using Skyline.DataMiner.Library.Common;
+using Skyline.DataMiner.Library.Common.Selectors;
+
+/// <summary>
+/// Represents a DataMiner Automation script.
+/// </summary>
+public class Script
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
-	using System.Text;
-	using Skyline.DataMiner.Automation;
-	
 	/// <summary>
-	/// Represents a DataMiner Automation script.
+	/// The script entry point.
 	/// </summary>
-	public class Script
+	/// <param name="engine">Link with SLAutomation process.</param>
+	public void Run(IEngine engine)
 	{
-		/// <summary>
-		/// The script entry point.
-		/// </summary>
-		/// <param name="engine">Link with SLAutomation process.</param>
-		public void Run(IEngine engine)
+		DateTime now = DateTime.UtcNow;
+		string desPath = @"C:\Skyline DataMiner\Documents";
+		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.csv";
+		string desFilePath = string.Format(@"{0}\{1}", desPath, fileName);
+		if (File.Exists(desFilePath))
 		{
-			var dms = engine.GetDms();
+			File.Delete(desFilePath);
 		}
+
+
+		//var elementsList = engine.FindElements(new ElementFilter { ProtocolName = "CISCO Manager", IncludePaused = false, IncludeHidden = false, IncludeStopped = false });
+
+		//elementsList.
+
+		var dms = engine.GetDms();
+
+		var elements = dms.GetElements().Where(e => e.Protocol.Name == "CISCO Manager" && e.State == ElementState.Active);
+
+		StringBuilder sb = new StringBuilder();
+		//sb.AppendLine(CreateCsvRowFromData(CiscoManager.Header));
+		foreach (var element in elements)
+		{
+			var systemDescription = element.GetStandaloneParameter<string>(5);
+			//engine.GenerateInformation("dmaId:" + element.AgentId + " systemDescription:" + systemDescription.GetValue());
+			//engine.GenerateInformation(element.AgentId + ":dma, " + element.Protocol.Name + element.State + " el. name: " + element.Name); // active state is 1
+
+			var newRow = new CiscoManager(element.AgentId, systemDescription.GetValue());
+
+			sb.AppendLine(CreateCsvRowFromData(newRow.GetDisplayData()));
+		}
+		File.WriteAllText(desFilePath, sb.ToString());
+	}
+
+	private static string CreateCsvRowFromData(string[] row)
+	{
+		return "\"" + string.Join("\",\"", row) + "\"";
+	}
+
+	public class CiscoManager
+	{
+		public CiscoManager(int dmaId, string systemDescription)
+		{
+			DmaID = dmaId.ToString();
+			SystemDescription = systemDescription;
+		}
+
+		public static string[] Header
+		{
+			get
+			{
+				return new[] { "DMA ID", "System Description"};
+			}
+		}
+
+		public string DmaID { get; private set; }
+
+		public string SystemDescription { get; set; }
+
+		public string[] GetDisplayData()
+		{
+			return new[]
+			{
+				DmaID,
+				SystemDescription,
+			};
+		}
+
 	}
 }
