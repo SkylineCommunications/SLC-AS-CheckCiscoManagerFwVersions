@@ -55,10 +55,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Skyline.DataMiner.Automation;
 using Skyline.DataMiner.Library.Automation;
 using Skyline.DataMiner.Library.Common;
 using Skyline.DataMiner.Library.Common.Selectors;
+using Skyline.DataMiner.Net.DMSState.Agents;
 
 /// <summary>
 /// Represents a DataMiner Automation script.
@@ -73,35 +75,51 @@ public class Script
 	{
 		DateTime now = DateTime.UtcNow;
 		string desPath = @"C:\Skyline DataMiner\Documents";
-		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.csv";
-		string desFilePath = string.Format(@"{0}\{1}", desPath, fileName);
-		if (File.Exists(desFilePath))
-		{
-			File.Delete(desFilePath);
-		}
-
-
-		//var elementsList = engine.FindElements(new ElementFilter { ProtocolName = "CISCO Manager", IncludePaused = false, IncludeHidden = false, IncludeStopped = false });
-
-		//elementsList.
+		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.json";
+		string desFilePath = Path.Combine(desPath, fileName);
 
 		var dms = engine.GetDms();
 
 		var elements = dms.GetElements().Where(e => e.Protocol.Name == "CISCO Manager" && e.State == ElementState.Active);
 
-		StringBuilder sb = new StringBuilder();
-		//sb.AppendLine(CreateCsvRowFromData(CiscoManager.Header));
+		var systemDescriptions = new List<string>();
+
+		var firstElement = elements.FirstOrDefault();
+		IDma agent = null;
+
+		if (firstElement != null)
+		{
+			agent = dms.GetAgent(firstElement.AgentId);
+		}
+
+		HashSet<string> uniqueDescriptions = new HashSet<string>(); // Store unique system descriptions
+
 		foreach (var element in elements)
 		{
 			var systemDescription = element.GetStandaloneParameter<string>(5);
-			//engine.GenerateInformation("dmaId:" + element.AgentId + " systemDescription:" + systemDescription.GetValue());
-			//engine.GenerateInformation(element.AgentId + ":dma, " + element.Protocol.Name + element.State + " el. name: " + element.Name); // active state is 1
 
-			var newRow = new CiscoManager(element.AgentId, systemDescription.GetValue());
+			string description = systemDescription.GetValue() ?? string.Empty;
 
-			sb.AppendLine(CreateCsvRowFromData(newRow.GetDisplayData()));
+			if (!uniqueDescriptions.Contains(description)) // Check if the description is unique
+			{
+				uniqueDescriptions.Add(description);
+				systemDescriptions.Add(description);
+			}
 		}
-		File.WriteAllText(desFilePath, sb.ToString());
+
+		var jsonData = new Dictionary<string, object>
+		{
+			{ "versionInfo", agent.VersionInfo ?? string.Empty },
+			{ "elements", systemDescriptions },
+		};
+
+		var jsonOptions = new JsonSerializerOptions
+		{
+			WriteIndented = true,
+		};
+		string jsonString = JsonSerializer.Serialize(jsonData, jsonOptions);
+
+		File.WriteAllText(desFilePath, jsonString);
 	}
 
 	private static string CreateCsvRowFromData(string[] row)
@@ -111,9 +129,9 @@ public class Script
 
 	public class CiscoManager
 	{
-		public CiscoManager(int dmaId, string systemDescription)
+		public CiscoManager(string versionInfo, string systemDescription)
 		{
-			DmaID = dmaId.ToString();
+			VersionInfo = versionInfo;
 			SystemDescription = systemDescription;
 		}
 
@@ -125,7 +143,7 @@ public class Script
 			}
 		}
 
-		public string DmaID { get; private set; }
+		public string VersionInfo { get; private set; }
 
 		public string SystemDescription { get; set; }
 
@@ -133,10 +151,9 @@ public class Script
 		{
 			return new[]
 			{
-				DmaID,
+				VersionInfo,
 				SystemDescription,
 			};
 		}
-
 	}
 }
