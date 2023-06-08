@@ -40,6 +40,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{BDDF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLC-AS-CheckCiscoManagerFwVersions_1", "SLC-AS-CheckCiscoManagerFwVersions_1\SLC-AS-CheckCiscoManagerFwVersions_1.csproj", "{9342015D-A378-40CD-BDA1-1423D54163F1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SLC-AS-MergeGeneratedFiles", "SLC-AS-MergeGeneratedFiles", "{3046D239-8856-4E6C-8DC5-38722800C069}"
+	ProjectSection(SolutionItems) = preProject
+		SLC-AS-MergeGeneratedFiles.xml = SLC-AS-MergeGeneratedFiles.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{B7A67F78-FA6B-4FE9-B11E-616A5D25EC97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLC-AS-MergeGeneratedFiles_1", "SLC-AS-MergeGeneratedFiles_1\SLC-AS-MergeGeneratedFiles_1.csproj", "{B3F6DD39-C246-4D24-A80C-1612876031DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +59,10 @@ Global
 		{9342015D-A378-40CD-BDA1-1423D54163F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9342015D-A378-40CD-BDA1-1423D54163F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9342015D-A378-40CD-BDA1-1423D54163F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3F6DD39-C246-4D24-A80C-1612876031DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3F6DD39-C246-4D24-A80C-1612876031DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3F6DD39-C246-4D24-A80C-1612876031DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3F6DD39-C246-4D24-A80C-1612876031DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +73,9 @@ Global
 		{43364782-4803-4DEF-BCC5-12C0597991DA} = {0B510CDC-1A60-481E-BA04-40366D14D051}
 		{BDDFB9EA-7466-4692-A007-F652D1416AD0} = {43364782-4803-4DEF-BCC5-12C0597991DA}
 		{9342015D-A378-40CD-BDA1-1423D54163F1} = {BDDFB9EA-7466-4692-A007-F652D1416AD0}
+		{3046D239-8856-4E6C-8DC5-38722800C069} = {0B510CDC-1A60-481E-BA04-40366D14D051}
+		{B7A67F78-FA6B-4FE9-B11E-616A5D25EC97} = {3046D239-8856-4E6C-8DC5-38722800C069}
+		{B3F6DD39-C246-4D24-A80C-1612876031DD} = {B7A67F78-FA6B-4FE9-B11E-616A5D25EC97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FFCF1826-8ACF-4F16-A0F7-E3D16D035B23}
