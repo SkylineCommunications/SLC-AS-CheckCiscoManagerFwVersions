@@ -81,9 +81,16 @@ public class Script
 			mergedObjects.Add(jsonObject);
 		}
 
-		string mergedJson = JsonConvert.SerializeObject(mergedObjects, Formatting.Indented);
+		RootObject rootObject = new RootObject { MergedObjects = mergedObjects };
+		string mergedJson = JsonConvert.SerializeObject(rootObject, Formatting.Indented);
 
 		File.WriteAllText(desFilePath, mergedJson);
+	}
+
+	public class RootObject
+	{
+		[JsonProperty("mergedObjects")]
+		public List<Root> MergedObjects { get; set; }
 	}
 
 	public class Root
@@ -94,4 +101,5 @@ public class Script
 		[JsonProperty("elements")]
 		public List<string> Elements { get; set; }
 	}
+
 }
