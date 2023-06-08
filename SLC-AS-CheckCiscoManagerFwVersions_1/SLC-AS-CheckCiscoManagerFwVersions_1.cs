@@ -121,39 +121,4 @@ public class Script
 
 		File.WriteAllText(desFilePath, jsonString);
 	}
-
-	private static string CreateCsvRowFromData(string[] row)
-	{
-		return "\"" + string.Join("\",\"", row) + "\"";
-	}
-
-	public class CiscoManager
-	{
-		public CiscoManager(string versionInfo, string systemDescription)
-		{
-			VersionInfo = versionInfo;
-			SystemDescription = systemDescription;
-		}
-
-		public static string[] Header
-		{
-			get
-			{
-				return new[] { "DMA ID", "System Description"};
-			}
-		}
-
-		public string VersionInfo { get; private set; }
-
-		public string SystemDescription { get; set; }
-
-		public string[] GetDisplayData()
-		{
-			return new[]
-			{
-				VersionInfo,
-				SystemDescription,
-			};
-		}
-	}
 }
