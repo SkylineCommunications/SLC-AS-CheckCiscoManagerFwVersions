@@ -73,6 +73,14 @@ public class Script
 	/// <param name="engine">Link with SLAutomation process.</param>
 	public void Run(IEngine engine)
 	{
+		var scriptParams = new ScriptParams
+		{
+			ProtocolName = engine.GetScriptParam("Protocol Name").Value,
+			ParameterId = engine.GetScriptParam("Parameter ID").Value,
+		};
+
+		var fields = scriptParams.ParseInputFields(scriptParams, engine);
+
 		DateTime now = DateTime.UtcNow;
 		string desPath = @"C:\Skyline DataMiner\Documents";
 		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.json";
@@ -80,7 +88,7 @@ public class Script
 
 		var dms = engine.GetDms();
 
-		var elements = dms.GetElements().Where(e => e.Protocol.Name == "CISCO Manager" && e.State == ElementState.Active);
+		var elements = dms.GetElements().Where(e => e.Protocol.Name == fields.ProtocolName && e.State == ElementState.Active);
 
 		var systemDescriptions = new List<string>();
 
@@ -96,7 +104,7 @@ public class Script
 
 		foreach (var element in elements)
 		{
-			var systemDescription = element.GetStandaloneParameter<string>(5);
+			var systemDescription = element.GetStandaloneParameter<string>(fields.ParameterId);
 
 			string description = systemDescription.GetValue() ?? string.Empty;
 
@@ -120,5 +128,61 @@ public class Script
 		string jsonString = JsonSerializer.Serialize(jsonData, jsonOptions);
 
 		File.WriteAllText(desFilePath, jsonString);
+	}
+
+	public class ScriptParams
+	{
+		public string ProtocolName { get; set; }
+
+		public string ParameterId { get; set; }
+
+		/// <summary>
+		/// Parse Script Parameters based on the provided input data.
+		/// </summary>
+		/// <param name="scriptParams">The input data.</param>
+		/// <param name="engine">Link with SLAutomation process.</param>
+		/// <returns>A CreateFields object.</returns>
+		public ScriptParamsParsed ParseInputFields(ScriptParams scriptParams, IEngine engine)
+		{
+			if (IsNullOrEmptyOrWhiteSpace(scriptParams.ProtocolName))
+			{
+				engine.ExitFail("Protocol Name is null or empty.");
+				return null;
+			}
+
+			if (!int.TryParse(scriptParams.ParameterId, out var intParameterId))
+			{
+				engine.ExitFail("Parameter ID isn't an integer.");
+				return null;
+			}
+
+			try
+			{
+				var parsedFields = new ScriptParamsParsed
+				{
+					ProtocolName = scriptParams.ProtocolName,
+					ParameterId = intParameterId,
+				};
+
+				return parsedFields;
+			}
+			catch
+			{
+				engine.ExitFail("Failed to parse Script Parameters.");
+				return null;
+			}
+		}
+
+		private static bool IsNullOrEmptyOrWhiteSpace(string value)
+		{
+			return string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
+		}
+	}
+
+	public class ScriptParamsParsed
+	{
+		public string ProtocolName { get; set; }
+
+		public int ParameterId { get; set; }
 	}
 }

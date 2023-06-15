@@ -65,7 +65,7 @@ public class Script
 	/// <param name="engine">Link with SLAutomation process.</param>
 	public void Run(IEngine engine)
 	{
-		string directoryPath = @"C:\Skyline DataMiner\Documents"; // Replace with the directory path where the JSON files are located
+		string directoryPath = @"C:\Skyline DataMiner\Documents"; // Replace with the directory path where the JSON files are located //TODO: Add new folder before. use directory class.
 		string[] filePaths = Directory.GetFiles(directoryPath, "Active_Cisco_Elements_*.json");
 
 		DateTime now = DateTime.UtcNow;
