@@ -82,7 +82,8 @@ public class Script
 		var fields = scriptParams.ParseInputFields(scriptParams, engine);
 
 		DateTime now = DateTime.UtcNow;
-		string desPath = @"C:\Skyline DataMiner\Documents";
+		string desPath = @"C:\Skyline DataMiner\Documents\Exports";
+		Directory.CreateDirectory(desPath);
 		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.json";
 		string desFilePath = Path.Combine(desPath, fileName);
 
