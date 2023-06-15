@@ -91,6 +91,11 @@ public class Script
 
 		var elements = dms.GetElements().Where(e => e.Protocol.Name == fields.ProtocolName && e.State == ElementState.Active);
 
+		if (!elements.Any())
+		{
+			engine.ExitFail("No active elements found with protocol name: " + fields.ProtocolName);
+		}
+
 		var systemDescriptions = new List<string>();
 
 		var firstElement = elements.FirstOrDefault();
@@ -107,7 +112,20 @@ public class Script
 		{
 			var systemDescription = element.GetStandaloneParameter<string>(fields.ParameterId);
 
-			string description = systemDescription.GetValue() ?? string.Empty;
+			string description = string.Empty;
+
+			try
+			{
+				description = string.IsNullOrEmpty(systemDescription.GetValue()) ? string.Empty : systemDescription.GetValue();
+			}
+			catch (ParameterNotFoundException)
+			{
+				engine.ExitFail($"No parameter found with ID: {fields.ParameterId}");
+			}
+			catch (Exception)
+			{
+				engine.ExitFail($"Failed getting value from Parameter: {fields.ParameterId}");
+			}
 
 			if (!uniqueDescriptions.Contains(description)) // Check if the description is unique
 			{
