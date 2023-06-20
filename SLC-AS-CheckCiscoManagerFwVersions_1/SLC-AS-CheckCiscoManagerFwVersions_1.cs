@@ -45,30 +45,153 @@ Revision History:
 
 DATE		VERSION		AUTHOR			COMMENTS
 
-dd/mm/2023	1.0.0.1		XXX, Skyline	Initial version
+06/06/2023	1.0.0.1		EVA, Skyline	Initial version
 ****************************************************************************
 */
 
-namespace SLC-AS-CheckCiscoManagerFwVersions_1
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using Skyline.DataMiner.Automation;
+using Skyline.DataMiner.Core.DataMinerSystem.Automation;
+using Skyline.DataMiner.Core.DataMinerSystem.Common;
+
+/// <summary>
+/// Represents a DataMiner Automation script.
+/// </summary>
+public class Script
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
-	using System.Text;
-	using Skyline.DataMiner.Automation;
-	
 	/// <summary>
-	/// Represents a DataMiner Automation script.
+	/// The script entry point.
 	/// </summary>
-	public class Script
+	/// <param name="engine">Link with SLAutomation process.</param>
+	public void Run(IEngine engine)
 	{
-		/// <summary>
-		/// The script entry point.
-		/// </summary>
-		/// <param name="engine">Link with SLAutomation process.</param>
-		public void Run(IEngine engine)
+		var scriptParams = new ScriptParams
 		{
-			var dms = engine.GetDms();
+			ProtocolName = engine.GetScriptParam("Protocol Name").Value,
+			ParameterId = engine.GetScriptParam("Parameter ID").Value,
+		};
+
+		var fields = scriptParams.ParseInputFields(scriptParams, engine);
+
+		DateTime now = DateTime.UtcNow;
+		string desPath = @"C:\Skyline DataMiner\Documents\Exports";
+		Directory.CreateDirectory(desPath);
+		string fileName = $"Active_Cisco_Elements_{now:ddMMyyyy_HHmmssfff}.json";
+		string desFilePath = Path.Combine(desPath, fileName);
+
+		var dms = engine.GetDms();
+
+		var elements = dms.GetElements().Where(e => e.Protocol.Name == fields.ProtocolName && e.State == ElementState.Active);
+
+		if (!elements.Any())
+		{
+			engine.ExitFail("No active elements found with protocol name: " + fields.ProtocolName);
 		}
+
+		var firstElement = elements.FirstOrDefault();
+		IDma agent = null;
+
+		if (firstElement != null)
+		{
+			agent = dms.GetAgent(firstElement.AgentId);
+		}
+
+		HashSet<string> uniqueDescriptions = new HashSet<string>();
+
+		foreach (var element in elements)
+		{
+			var systemDescription = element.GetStandaloneParameter<string>(fields.ParameterId);
+
+			string description = string.Empty;
+
+			try
+			{
+				description = string.IsNullOrEmpty(systemDescription.GetValue()) ? string.Empty : systemDescription.GetValue();
+			}
+			catch (ParameterNotFoundException)
+			{
+				engine.ExitFail($"No parameter found with ID: {fields.ParameterId}");
+			}
+			catch (Exception)
+			{
+				engine.ExitFail($"Failed getting value from Parameter: {fields.ParameterId}");
+			}
+
+			uniqueDescriptions.Add(description);
+		}
+
+		var jsonData = new Dictionary<string, object>
+		{
+			{ "versionInfo", agent.VersionInfo ?? string.Empty },
+			{ "elements", uniqueDescriptions },
+		};
+
+		var jsonOptions = new JsonSerializerOptions
+		{
+			WriteIndented = true,
+		};
+		string jsonString = JsonSerializer.Serialize(jsonData, jsonOptions);
+
+		File.WriteAllText(desFilePath, jsonString);
+	}
+
+	public class ScriptParams
+	{
+		public string ProtocolName { get; set; }
+
+		public string ParameterId { get; set; }
+
+		/// <summary>
+		/// Parse Script Parameters based on the provided input data.
+		/// </summary>
+		/// <param name="scriptParams">The input data.</param>
+		/// <param name="engine">Link with SLAutomation process.</param>
+		/// <returns>A CreateFields object.</returns>
+		public ScriptParamsParsed ParseInputFields(ScriptParams scriptParams, IEngine engine)
+		{
+			if (IsNullOrEmptyOrWhiteSpace(scriptParams.ProtocolName))
+			{
+				engine.ExitFail("Protocol Name is null or empty.");
+				return null;
+			}
+
+			if (!int.TryParse(scriptParams.ParameterId, out var intParameterId))
+			{
+				engine.ExitFail("Parameter ID isn't an integer.");
+				return null;
+			}
+
+			try
+			{
+				var parsedFields = new ScriptParamsParsed
+				{
+					ProtocolName = scriptParams.ProtocolName,
+					ParameterId = intParameterId,
+				};
+
+				return parsedFields;
+			}
+			catch
+			{
+				engine.ExitFail("Failed to parse Script Parameters.");
+				return null;
+			}
+		}
+
+		private static bool IsNullOrEmptyOrWhiteSpace(string value)
+		{
+			return string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
+		}
+	}
+
+	public class ScriptParamsParsed
+	{
+		public string ProtocolName { get; set; }
+
+		public int ParameterId { get; set; }
 	}
 }
