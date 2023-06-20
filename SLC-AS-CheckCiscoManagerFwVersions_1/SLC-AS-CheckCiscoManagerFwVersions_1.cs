@@ -96,8 +96,6 @@ public class Script
 			engine.ExitFail("No active elements found with protocol name: " + fields.ProtocolName);
 		}
 
-		var systemDescriptions = new List<string>();
-
 		var firstElement = elements.FirstOrDefault();
 		IDma agent = null;
 
@@ -106,7 +104,7 @@ public class Script
 			agent = dms.GetAgent(firstElement.AgentId);
 		}
 
-		HashSet<string> uniqueDescriptions = new HashSet<string>(); // Store unique system descriptions
+		HashSet<string> uniqueDescriptions = new HashSet<string>();
 
 		foreach (var element in elements)
 		{
@@ -127,17 +125,13 @@ public class Script
 				engine.ExitFail($"Failed getting value from Parameter: {fields.ParameterId}");
 			}
 
-			if (!uniqueDescriptions.Contains(description)) // Check if the description is unique
-			{
-				uniqueDescriptions.Add(description);
-				systemDescriptions.Add(description);
-			}
+			uniqueDescriptions.Add(description);
 		}
 
 		var jsonData = new Dictionary<string, object>
 		{
 			{ "versionInfo", agent.VersionInfo ?? string.Empty },
-			{ "elements", systemDescriptions },
+			{ "elements", uniqueDescriptions },
 		};
 
 		var jsonOptions = new JsonSerializerOptions
