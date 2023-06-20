@@ -70,7 +70,7 @@ public class Script
 		string[] filePaths = Directory.GetFiles(directoryPath, "Active_Cisco_Elements_*.json");
 
 		DateTime now = DateTime.UtcNow;
-		string mergedFileName = $"Merged_Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.json";
+		string mergedFileName = $"Merged_Active_Cisco_Elements_{now:ddMMyyyy_HHmmssfff}.json";
 		string desFilePath = Path.Combine(directoryPath, mergedFileName);
 
 		List<Root> mergedObjects = new List<Root>();
