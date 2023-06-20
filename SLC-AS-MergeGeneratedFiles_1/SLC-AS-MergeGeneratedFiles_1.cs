@@ -102,5 +102,4 @@ public class Script
 		[JsonProperty("elements")]
 		public List<string> Elements { get; set; }
 	}
-
 }

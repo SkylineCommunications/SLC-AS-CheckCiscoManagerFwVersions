@@ -51,16 +51,12 @@ DATE		VERSION		AUTHOR			COMMENTS
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using Skyline.DataMiner.Automation;
-using Skyline.DataMiner.Library.Automation;
-using Skyline.DataMiner.Library.Common;
-using Skyline.DataMiner.Library.Common.Selectors;
-using Skyline.DataMiner.Net.DMSState.Agents;
+using Skyline.DataMiner.Core.DataMinerSystem.Automation;
+using Skyline.DataMiner.Core.DataMinerSystem.Common;
 
 /// <summary>
 /// Represents a DataMiner Automation script.
@@ -84,7 +80,7 @@ public class Script
 		DateTime now = DateTime.UtcNow;
 		string desPath = @"C:\Skyline DataMiner\Documents\Exports";
 		Directory.CreateDirectory(desPath);
-		string fileName = $"Active_Cisco_Elements_{now.ToString("ddMMyyyy_HHmmssfff")}.json";
+		string fileName = $"Active_Cisco_Elements_{now:ddMMyyyy_HHmmssfff}.json";
 		string desFilePath = Path.Combine(desPath, fileName);
 
 		var dms = engine.GetDms();
